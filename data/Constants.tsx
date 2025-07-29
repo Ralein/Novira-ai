@@ -64,7 +64,7 @@ export default {
         "tailwind-merge": "^2.4.0",
         "tailwindcss-animate": "^1.0.7",
         "lucide-react": "^0.469.0",
-        "react-router-dom": "^7.1.1",
+        "react-router-dom": "^6.0.0",
         "firebase": "^11.1.0",
         "@google/generative-ai": "^0.21.0",
         "date-fns": "^4.1.0",
