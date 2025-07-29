@@ -12,7 +12,7 @@
     "@codesandbox/sandpack-react": "^2.20.0",
     "@codesandbox/sandpack-themes": "^2.0.21",
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
-    "@google/genai": "^0.14.0",
+    "@google/genai": "^0.14.1",
     "@google/generative-ai": "^0.24.1",
     "@imagekit/next": "^2.1.2",
     "@imagekit/react": "^5.0.0",

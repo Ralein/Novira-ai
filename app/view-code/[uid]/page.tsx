@@ -7,7 +7,7 @@ import { useParams, usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import SelectionDetail from '../_components/SelectionDetail'
 import CodeEditor from '../_components/CodeEditor'
-import { read } from 'fs'
+
 
 export interface RECORD {
     id: number,
@@ -40,7 +40,7 @@ function ViewCode() {
         setCodeResp('');
         setLoading(true)
 
-        const result = await axios.get('/api/wireframe-code?uid=' + uid)
+                const result = await axios.get('/api/wireframe-code?uid=' + uid)
 
         const resp = result?.data;
         setRecord(result?.data)
@@ -97,7 +97,8 @@ function ViewCode() {
 
 
     const UpdateCodeToDb = async () => {
-        console.log(record)
+        console.log('Updating code to DB with UID:', record?.uid);
+        console.log('Code Response being sent:', codeResp);
         const result = await axios.put('/api/wireframe-code', {
             uid: record?.uid,
             codeResp: { resp: codeResp }

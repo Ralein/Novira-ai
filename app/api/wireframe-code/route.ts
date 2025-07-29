@@ -21,7 +21,7 @@ export async function POST(request: Request) {
             imageUrl: imageUrl,
             model: model,
             description: description,
-            code: {}, // Empty JSON object for now
+            code: null, // Initialize as null instead of empty object
             createdBy: email
         }).returning();
 
