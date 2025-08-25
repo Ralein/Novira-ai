@@ -6,6 +6,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import axios from "axios";
 import AppHeader from '../_components/AppHeader';
 import { AppSidebar } from '../_components/AppSidebar';
+import { Loader2 } from 'lucide-react';
 
 function DashboardProvider({
     children,
@@ -13,24 +14,35 @@ function DashboardProvider({
     children: React.ReactNode;
 }>) {
 
-    const user = useAuthContext();
+    const { user, authLoading } = useAuthContext();
     const router = useRouter();
 
     useEffect(() => {
-        if (!user?.user && user.user) return router.replace('/')
-
-
-        user?.user && checkUser()
-
-    }, [user])
+        if (!authLoading) {
+            if (user) {
+                checkUser();
+            } else {
+                router.replace('/');
+            }
+        }
+    }, [user, authLoading, router]);
 
 
     const checkUser = async () => {
-        const result = await axios.post('/api/user', {
-            userName: user?.user?.displayName,
-            userEmail: user?.user?.email
-        });
-        console.log(user);
+        if (user) {
+            await axios.post('/api/user', {
+                userName: user.displayName,
+                userEmail: user.email
+            });
+        }
+    }
+
+    if (authLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        );
     }
 
 

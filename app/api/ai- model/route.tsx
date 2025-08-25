@@ -1,33 +1,38 @@
-import Constants from "@/data/Constants";
-import { NextRequest } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+import { NextRequest } from 'next/server';
+import Groq from 'groq-sdk';
 
 export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
-  console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'Loaded' : 'Not Loaded');
-  const { model, description, imageUrl } = await req.json();
-  console.log('Request Body:', { model, description, imageUrl });
+  const { description, imageUrl } = await req.json();
 
-  const ModelObj = Constants.AiModelList.find(item => item.name === model);
-  const modelName = ModelObj?.modelName ?? "gemini-pro-vision"; // Default to vision model
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-  const geminiModel = genAI.getGenerativeModel({ model: modelName });
-
-  const parts = [
-    { text: description },
-    { inlineData: { mimeType: "image/png", data: imageUrl.split(",")[1] } }
-  ];
-
-  const result = await geminiModel.generateContentStream({ contents: [{ role: "user", parts }] });
+  const completion = await groq.chat.completions.create({
+    model: 'llava-v1.5-7b-4096',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: description },
+          {
+            type: 'image_url',
+            image_url: {
+              url: imageUrl,
+            },
+          },
+        ],
+      },
+    ],
+    max_tokens: 2048,
+    stream: true,
+  });
 
   const stream = new ReadableStream({
     async start(controller) {
-      for await (const chunk of result.stream) {
-        const text = chunk.text();
-        controller.enqueue(new TextEncoder().encode(text));
+      for await (const chunk of completion) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        controller.enqueue(new TextEncoder().encode(content));
       }
       controller.close();
     },
@@ -35,7 +40,7 @@ export async function POST(req: NextRequest) {
 
   return new Response(stream, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
+      'Content-Type': 'text/plain; charset=utf-8',
     },
   });
 }

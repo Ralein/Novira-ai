@@ -6,6 +6,7 @@ import React, { useContext, useEffect, useState } from 'react'
 
 interface AuthContextType {
     user: User | null;
+    authLoading: boolean;
 }
 
 function Provider({
@@ -14,17 +15,19 @@ function Provider({
     children: React.ReactNode;
 }>) {
     const [user, setUser] = useState<User | null>(null);
+    const [authLoading, setAuthLoading] = useState(true);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setUser(user);
+            setAuthLoading(false);
         });
 
         return () => unsubscribe(); // Cleanup
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user }}>
+        <AuthContext.Provider value={{ user, authLoading }}>
             <div>
                 {children}
             </div>
@@ -36,7 +39,10 @@ function Provider({
 export const useAuthContext = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (!context) throw new Error("useAuth must be used within an AuthProvider");
-    return context;
+    return {
+        user: context.user,
+        authLoading: context.authLoading
+    };
 };
 
 export default Provider

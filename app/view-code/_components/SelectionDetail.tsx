@@ -1,5 +1,5 @@
 import React from 'react'
-import RECORD from "../[uid]/page";
+import { RECORD } from '../[uid]/page';
 
 import Image from 'next/image'
 import { Input } from '@/components/ui/input'

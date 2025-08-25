@@ -1,53 +1,38 @@
-import React from 'react'
-import { Sandpack, SandpackCodeEditor, SandpackLayout, SandpackProvider } from "@codesandbox/sandpack-react";
+import React from 'react';
+import { Sandpack } from "@codesandbox/sandpack-react";
 import Constants from '@/data/Constants';
 import { aquaBlue } from "@codesandbox/sandpack-themes";
-function CodeEditor({ codeResp, isReady }: any) {
+
+function CodeEditor({ codeResp, isReady }: { codeResp: string, isReady: boolean }) {
     return (
         <div>
-            {isReady ? <Sandpack template="react"
-                theme={aquaBlue}
-                options={{
-                    externalResources: ["https://cdn.tailwindcss.com"],
-                    showNavigator: true,
-                    showTabs: true,
-                    editorHeight: 600
-                }}
-                customSetup={{
-                    dependencies: {
-                        ...Constants.DEPENDANCY
-                    }
-                }}
-                files={{
-                    "/App.js": `${codeResp}`,
-
-                }} />
-                :
-                <SandpackProvider template="react"
+            {isReady ? (
+                <Sandpack
+                    template="vanilla"
                     theme={aquaBlue}
-                    files={{
-                        "/app.js": {
-                            code: `${codeResp}`,
-                            active: true
-                        }
+                    options={{
+                        showNavigator: true,
+                        showTabs: true,
+                        editorHeight: 600,
                     }}
                     customSetup={{
                         dependencies: {
-                            ...Constants.DEPENDANCY
-                        }
+                            ...(Constants as any).DEPENDANCY,
+                        },
                     }}
-                    options={{
-                        externalResources: ["https://cdn.tailwindcss.com"],
+                    files={{    
+                        "/index.html":`${codeResp}`,
+                        "/style.css":`${codeResp}`,
+                        "/script.js":`${codeResp}`,
                     }}
-                >
-                    <SandpackLayout>
-
-                        <SandpackCodeEditor showTabs={true} style={{ height: '70vh' }} />
-                    </SandpackLayout>
-                </SandpackProvider>
-            }
+                />
+            ) : (
+                <div className="w-full bg-[#1e293b] h-[600px] rounded-lg flex items-center justify-center">
+                    <p className="text-white">Loading Code...</p>
+                </div>
+            )}
         </div>
-    )
+    );
 }
 
-export default CodeEditor
+export default CodeEditor;

@@ -12,12 +12,13 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import axios from 'axios'
-import { uuid } from 'drizzle-orm/pg-core'
+
 import { useAuthContext } from '@/app/provider'
 import { useRouter } from 'next/navigation'
 import Constants from '@/data/Constants'
 import { toast } from 'sonner'
 import Image from 'next/image'
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 function ImageUpload() {
 
@@ -45,7 +46,8 @@ function ImageUpload() {
             return;
         }
         setLoading(true);
-        const fileName = Date.now() + '.png';
+        const extension = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${extension}`;
         const reader = new FileReader();
         reader.onloadend = async () => {
             const base64String = reader.result?.toString().split(",")[1];
@@ -152,12 +154,12 @@ function ImageUpload() {
                                     <SelectValue placeholder="CHOOSE MODEL..." />
                                 </SelectTrigger>
                                 <SelectContent className='bg-gray-900 border-gray-700'>
-                                    {Constants?.AiModelList.map((model, index) => (
-                                        <SelectItem value={model.name} key={index} className='hover:bg-purple-900/50'>
+                                    {(Constants as any)?.AiModelList.map((model: { name: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; icon: string | StaticImport; }, index: React.Key | null | undefined) => (
+                                        <SelectItem value={String(model.name)} key={index} className='hover:bg-purple-900/50'>
                                             <div className='flex items-center gap-3'>
                                                 <Image 
                                                     src={model.icon} 
-                                                    alt={model.name} 
+                                                    alt={String(model.name)}
                                                     width={25} 
                                                     height={25} 
                                                     className='rounded-sm'
